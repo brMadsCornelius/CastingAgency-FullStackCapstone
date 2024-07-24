@@ -1,5 +1,6 @@
 import os
 from sqlalchemy import Column, String, Integer, Date, create_engine
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from settings import DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD
 
@@ -67,7 +68,7 @@ class Actor(db.Model):
 Movie model
 
 """
-class Movie(db.model):
+class Movie(db.Model):
     __tablename__ = 'movies'
 
     id = Column(Integer, primary_key=True)
