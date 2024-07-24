@@ -1,6 +1,5 @@
 import os
 from sqlalchemy import Column, String, Integer, Date, create_engine
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from settings import DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD
 
@@ -22,9 +21,6 @@ def setup_db(app, database_path=database_path):
     db.app = app
     db.init_app(app)
     db.create_all()
-
-def setup_migrations(app):
-    migrate = Migrate(app,db)
     
 
 """
