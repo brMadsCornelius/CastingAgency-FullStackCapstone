@@ -2,6 +2,7 @@ from flask import Flask, request, abort, jsonify
 from models import Actor,Movie,setup_db
 from flask_cors import CORS
 from datetime import datetime
+from auth import AuthError, requires_auth
 
 def create_app(test_config=None):
     # create and configure the app
@@ -16,12 +17,16 @@ def create_app(test_config=None):
 
     @app.route('/')
     def main():
-        return 'Casting Agency Website'
+        return jsonify({
+            'success': True,
+            'message': 'Casting Agency Website - this page requires no authentication'
+        }) 
     
 
     # Get Movies
     @app.route('/movies')
-    def get_movies():
+    @requires_auth('get:movies')
+    def get_movies(f):
         movies = Movie.query.order_by(Movie.id).all()
 
         if len(movies) == 0:
@@ -38,7 +43,8 @@ def create_app(test_config=None):
 
     # Get Actors
     @app.route('/actors')
-    def get_actors():
+    @requires_auth('get:actors')
+    def get_actors(f):
         actors = Actor.query.order_by(Actor.id).all()
 
         if len(actors) == 0:
@@ -55,7 +61,8 @@ def create_app(test_config=None):
 
     # Delete Actors
     @app.route('/actors/<int:actor_id>', methods=['DELETE'])
-    def delete_actor(actor_id):
+    @requires_auth('delete:actors')
+    def delete_actor(f,actor_id):
         actor = Actor.query.get(actor_id)
         
         if actor is None:
@@ -72,7 +79,8 @@ def create_app(test_config=None):
 
     # Delete Movies
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-    def delete_movie(movie_id):
+    @requires_auth('delete:movies')
+    def delete_movie(f,movie_id):
         movie = Movie.query.get(movie_id)
         
         if movie is None:
@@ -89,7 +97,8 @@ def create_app(test_config=None):
 
     # POST Actors
     @app.route('/actors', methods=["POST"])
-    def add_actors():
+    @requires_auth('post:actors')
+    def add_actors(f):
         body = request.get_json()
 
         new_name = body.get('name', None)
@@ -116,7 +125,8 @@ def create_app(test_config=None):
 
     # POST Movies
     @app.route('/movies', methods=["POST"])
-    def add_movies():
+    @requires_auth('post:movies')
+    def add_movies(f):
         body = request.get_json()
 
         new_title = body.get('title')
@@ -146,7 +156,8 @@ def create_app(test_config=None):
 
     # Patch Actors
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-    def patch_actor(actor_id):
+    @requires_auth('patch:actors')
+    def patch_actor(f,actor_id):
         actor = Actor.query.get(actor_id)
         
         if actor is None:
@@ -180,7 +191,8 @@ def create_app(test_config=None):
 
     # Patch Movies
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
-    def patch_movie(movie_id):
+    @requires_auth('patch:movies')
+    def patch_movie(f,movie_id):
         movie = Movie.query.get(movie_id)
         
         if movie is None:
@@ -229,5 +241,13 @@ def create_app(test_config=None):
             jsonify({"success": False, "error": 422, "message": "Unprocessable"}),
             422,
         )
+
+    @app.errorhandler(AuthError)
+    def auth_error(error):
+        return jsonify({
+            "success": False,
+            "error": error.status_code,
+            "message": error.error['description']
+        }), error.status_code
 
     return app

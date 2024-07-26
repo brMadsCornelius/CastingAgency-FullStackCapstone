@@ -62,6 +62,13 @@ class TriviaTestCase(unittest.TestCase):
             self.db.session.remove()
             self.db.drop_all()
 
+    def test_get_main(self):
+        res = self.client().get('/')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["message"], 'Casting Agency Website - this page requires no authentication')
+
     def test_get_actors(self):
         res = self.client().get('/actors')
         data = json.loads(res.data)
