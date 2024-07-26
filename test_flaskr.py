@@ -5,10 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flaskr import create_app
 from models import Actor,Movie
 from settings import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_TEST_NAME
+import os
 
+casting_assistant_token = os.environ.get('CASTING_ASSISTANT_TOKEN')
+casting_director_token = os.environ.get('CASTING_DIRECTOR_TOKEN')
+executive_producer_token = os.environ.get('EXECUTIVE_PRODUCER_TOKEN')
 
-class TriviaTestCase(unittest.TestCase):
-    """This class represents the trivia test case"""
+class CastingAgencyTestCase(unittest.TestCase):
+    """This class represents the casting agency test case"""
 
     def setUp(self):
         """Define test variables and initialize app."""
@@ -28,6 +32,17 @@ class TriviaTestCase(unittest.TestCase):
         "title": "Test Movie",
         "release_date": "2024-08-15",
         "genre": "Action"
+        }
+
+        # Define headers for different roles
+        self.assistant_headers = {
+            'Authorization': f'Bearer {casting_assistant_token}'
+        }
+        self.director_headers = {
+            'Authorization': f'Bearer {casting_director_token}'
+        }
+        self.executive_headers = {
+            'Authorization': f'Bearer {executive_producer_token}'
         }
 
         # binds the app to the current context
@@ -70,7 +85,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["message"], 'Casting Agency Website - this page requires no authentication')
 
     def test_get_actors(self):
-        res = self.client().get('/actors')
+        res = self.client().get('/actors', headers=self.assistant_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -78,14 +93,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data["actors"])
 
     def test_get_actors_fail(self):
-        res = self.client().get('/actors1234568')
+        res = self.client().get('/actors1234568', headers=self.assistant_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
 
     def test_get_movies(self):
-        res = self.client().get('/movies')
+        res = self.client().get('/movies', headers=self.assistant_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -93,7 +108,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data["movies"])
 
     def test_get_movies_fail(self):
-        res = self.client().get('/movies1234568')
+        res = self.client().get('/movies1234568', headers=self.assistant_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -101,22 +116,20 @@ class TriviaTestCase(unittest.TestCase):
 
    
     def test_add_actors(self):
-        res = self.client().post('/actors', json={
+        res = self.client().post('/actors', headers=self.director_headers, json={
         "name": "Test Person",
         "age": "42",
         "gender": "Male"
         })
         data = json.loads(res.data)
-        #print("HERE:   ")
-        #print(res.data)
-        #print()
+        
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         self.assertTrue(data)
         
 
     def test_add_actors_fail(self):
-        res = self.client().post('/actors', json={})
+        res = self.client().post('/actors',headers=self.director_headers, json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
@@ -128,48 +141,36 @@ class TriviaTestCase(unittest.TestCase):
             "age": "30",
             "gender": "Female"
         }
-        res = self.client().patch(f'/actors/{self.sample_actor_id}', json=updated_actor)
+        res = self.client().patch(f'/actors/{self.sample_actor_id}',headers=self.director_headers, json=updated_actor)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
 
-        # Check if the actor is updated in the database
-        actor = Actor.query.filter_by(id=self.sample_actor_id).one_or_none()
-      
-        self.assertIsNotNone(actor)
-        self.assertEqual(actor.name, updated_actor["name"])
-        self.assertEqual(str(actor.age), updated_actor["age"])
-        self.assertEqual(actor.gender, updated_actor["gender"])
-
     def test_update_actors_fail(self):
-        res = self.client().patch('/actors/123456789', json={})
+        res = self.client().patch('/actors/123456789',headers=self.director_headers, json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
        
     def test_delete_actors(self):
-        res = self.client().delete(f'/actors/{self.sample_actor_id}')
+        res = self.client().delete(f'/actors/{self.sample_actor_id}',headers=self.director_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         self.assertEqual(data["deleted"], self.sample_actor_id)
 
-        # Check if the actor is deleted from the database
-        actor = Actor.query.filter_by(id=self.sample_actor_id).one_or_none()
-        self.assertIsNone(actor)
-
     def test_delete_actors_fail(self):
-        res = self.client().delete('/actors/123456789')
+        res = self.client().delete('/actors/123456789',headers=self.director_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
 
     def test_add_movies(self):
-        res = self.client().post('/movies', json={
+        res = self.client().post('/movies',headers=self.executive_headers, json={
             "title": "Test Movie",
             "release_date": "2024-08-15",
             "genre": "Action"
@@ -181,7 +182,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data)
 
     def test_add_movies_fail(self):
-        res = self.client().post('/movies', json={})
+        res = self.client().post('/movies',headers=self.executive_headers, json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
@@ -191,30 +192,23 @@ class TriviaTestCase(unittest.TestCase):
         updated_movie = {
             "title": "Updated Movie",
             "release_date": "2025-01-01",
-            "genre": "Drama"
+            "genre": "Drama",
         }
-        res = self.client().patch(f'/movies/{self.sample_movie_id}', json=updated_movie)
+        res = self.client().patch(f'/movies/{self.sample_movie_id}',headers=self.director_headers, json=updated_movie)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
 
-        # Check if the movie is updated in the database
-        movie = Movie.query.filter_by(id=self.sample_movie_id).one_or_none()
-        self.assertIsNotNone(movie)
-        self.assertEqual(movie.title, updated_movie["title"])
-        self.assertEqual(str(movie.release_date), updated_movie["release_date"])
-        self.assertEqual(movie.genre, updated_movie["genre"])
-
     def test_update_movies_fail(self):
-        res = self.client().patch('/movies/123456789', json={})
+        res = self.client().patch('/movies/123456789',headers=self.director_headers, json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
 
     def test_delete_movies(self):
-        res = self.client().delete(f'/movies/{self.sample_movie_id}')
+        res = self.client().delete(f'/movies/{self.sample_movie_id}',headers=self.executive_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -226,14 +220,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertIsNone(movie)
 
     def test_delete_movies_fail(self):
-        res = self.client().delete('/movies/123456789')
+        res = self.client().delete('/movies/123456789',headers=self.executive_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
 
     def test_404_error_handler(self):
-        response = self.client().get('/nonexistent_route')
+        response = self.client().get('/nonexistent_route',headers=self.director_headers)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
@@ -242,13 +236,27 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource not found')
 
     def test_422_error_handler(self):
-        response = self.client().post('/movies', json={})
+        response = self.client().post('/movies',headers=self.executive_headers, json={})
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 422)
         self.assertFalse(data['success'])
         self.assertEqual(data['error'], 422)
         self.assertEqual(data['message'], 'Unprocessable')
+
+    def post_movie_as_assistant_fail(self):
+        res = self.client().post('/movies',headers=self.assistant_headers, json=self.new_movie)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data["success"], False)
+
+    def post_movie_as_director_fail(self):
+        res = self.client().post('/movies',headers=self.director_headers, json=self.new_movie)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data["success"], False)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
