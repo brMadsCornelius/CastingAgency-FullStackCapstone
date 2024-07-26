@@ -35,7 +35,7 @@ To run the application run the setup.sh bash to setup all environment variables 
 source setup.sh
 ```
 
-These commands put the application in development and directs our application to use the `__init__.py` file in our flaskr folder. Working in development mode shows an interactive debugger in the console and restarts the server whenever changes are made. Development has been done using WSL2.
+Working in development mode shows an interactive debugger in the console and restarts the server whenever changes are made. Development has been done using WSL2.
 
 Now simply start the flask application:
 
