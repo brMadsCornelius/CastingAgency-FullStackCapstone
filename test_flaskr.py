@@ -15,10 +15,8 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
-        DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
-        DATABASE_NAME = os.environ.get('DATABASE_NAME')
-        self.database_path = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@localhost:5432/{DATABASE_NAME}"
+        DATABASE_URL_TEST = os.environ.get('DATABASE_URL_TEST')
+        self.database_path = DATABASE_URL_TEST
         
         self.app = create_app({
             "SQLALCHEMY_DATABASE_URI": self.database_path

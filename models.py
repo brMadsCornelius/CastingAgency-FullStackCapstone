@@ -2,10 +2,8 @@ import os
 from sqlalchemy import Column, String, Integer, Date, create_engine
 from flask_sqlalchemy import SQLAlchemy
 
-DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
-DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
-DATABASE_NAME = os.environ.get('DATABASE_NAME')
-database_path = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@localhost:5432/{DATABASE_NAME}"
+DATABASE_URL = os.environ.get('DATABASE_URL')
+database_path = DATABASE_URL
 
 db = SQLAlchemy()
 
