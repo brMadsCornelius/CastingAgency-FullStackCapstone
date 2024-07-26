@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
 from models import Actor,Movie
-from settings import DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_TEST_NAME
 import os
 
 casting_assistant_token = os.environ.get('CASTING_ASSISTANT_TOKEN')
@@ -16,7 +15,10 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        self.database_path = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@localhost:5432/{DATABASE_TEST_NAME}"
+        DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
+        DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+        DATABASE_NAME = os.environ.get('DATABASE_NAME')
+        self.database_path = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@localhost:5432/{DATABASE_NAME}"
         
         self.app = create_app({
             "SQLALCHEMY_DATABASE_URI": self.database_path
