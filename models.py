@@ -1,13 +1,9 @@
 import os
 from sqlalchemy import Column, String, Integer, Date, create_engine
 from flask_sqlalchemy import SQLAlchemy
-from settings import DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD
 
-# setting up the environment variables so we dont have to write it in terminal every time
-os.environ["FLASK_APP"] = "flaskr"
-os.environ["FLASK_ENV"] = "development"
-
-database_path = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@localhost:5432/{DATABASE_NAME}"
+DATABASE_URL = os.environ.get('DATABASE_URL')
+database_path = DATABASE_URL
 
 db = SQLAlchemy()
 
@@ -21,9 +17,6 @@ def setup_db(app, database_path=database_path):
     db.app = app
     db.init_app(app)
     db.create_all()
-
-def setup_migrations(app):
-    migrate = Migrate(app,db)
     
 
 """
@@ -67,7 +60,7 @@ class Actor(db.Model):
 Movie model
 
 """
-class Movie(db.model):
+class Movie(db.Model):
     __tablename__ = 'movies'
 
     id = Column(Integer, primary_key=True)
