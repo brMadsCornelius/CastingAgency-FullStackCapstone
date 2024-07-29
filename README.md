@@ -8,7 +8,7 @@
 
 This project is the final project in the Fullstack Developer nanodegree capstone project!
 
-This project uses the Flask framework to implement a Casting Agency service together with a Postgres database.
+This project uses the Flask framework to implement a Casting Agency service together with a Postgres database. The flask framework is easy to use and provides a secure and abstract way to communicate with a Postgres database. 3rd party authentication Auth0 is used for a secure handling of the 3 roles casting assistant, casting director and executive producer. You can read more about these later in the the README.  
 
 Backend code follows [PEP8 style guidelines](https://www.python.org/dev/peps/pep-0008/). 
 
