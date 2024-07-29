@@ -57,13 +57,26 @@ The application will run on `http://127.0.0.1:5000/`
 
 Not developed yet.
 
-## Authentication
+## Roles and permissions
 
-This application uses 3 token for authentication:
+The application has 3 roles. Underlying an overview can be seen showing all the associated permissions for each role:
 
-- Casting Assistant: CASTING_ASSISTANT_TOKEN
-- Casting Director: CASTING_DIRECTOR_TOKEN
-- Executive Director: EXECUTIVE_DIRECTOR_TOKEN
+- Casting Assistant: 
+  - get:actors
+  - get:movies
+
+- Casting Director:
+  - Same as Casting Assistant and
+  - delete:actors
+  - patch:actors
+  - post:actors
+  - patch:movies
+
+- Executive Director:
+  - Same as Casting Director and
+  - post:movies
+  - delete:movies
+
 
 The tokens for each role can be seen in setup.sh (valid from 24h since 15:00 29/07/2024)
 

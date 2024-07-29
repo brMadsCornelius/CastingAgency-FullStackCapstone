@@ -101,9 +101,9 @@ def create_app(test_config=None):
     def add_actors(f):
         body = request.get_json()
 
-        new_name = body.get('name', None)
-        new_age = body.get('age', None)
-        new_gender = body.get('gender', None)
+        new_name = body.get('name')
+        new_age = body.get('age')
+        new_gender = body.get('gender')
      
         # Ensuer that input has data
         if new_name==None or new_age==None or new_gender==None:
