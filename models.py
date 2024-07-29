@@ -18,12 +18,30 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
     
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Date
 
-"""
-Actor model
+db = SQLAlchemy()
 
-"""
-class Actor(db.Model):
+class BaseModel(db.Model):
+    __abstract__ = True  # So SQLAlchemy does not create a table for this model
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        raise NotImplementedError("Subclasses must implement this method")
+
+
+class Actor(BaseModel):
     __tablename__ = 'actors'
 
     id = Column(Integer, primary_key=True)
@@ -36,31 +54,16 @@ class Actor(db.Model):
         self.age = age
         self.gender = gender
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
     def format(self):
         return {
             'id': self.id,
             'name': self.name,
             'age': self.age,
             'gender': self.gender
-            }
-    
+        }
 
-"""
-Movie model
 
-"""
-class Movie(db.Model):
+class Movie(BaseModel):
     __tablename__ = 'movies'
 
     id = Column(Integer, primary_key=True)
@@ -68,21 +71,10 @@ class Movie(db.Model):
     release_date = Column(Date)
     genre = Column(String)
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
     def format(self):
-        return({
+        return {
             "id": self.id,
             "title": self.title,
             "release_date": self.release_date,
             "genre": self.genre
-        })
+        }
