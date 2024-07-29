@@ -1,3 +1,9 @@
+# LIVE url: http://castingagency-fullstackcapstone.onrender.com
+
+:computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer::computer:
+
+:movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera::movie_camera:
+
 # Casting Agency API
 
 This project is the final project in the Fullstack Developer nanodegree capstone project!
@@ -28,12 +34,14 @@ CREATE DATABASE castingagency_test;
 
 It is recommended to use a virutal enviroment (venv) to comply with the pythonic standards.
 
-From the backend folder run `pip install requirements.txt`. All required packages are included in the requirements file. 
+From the main folder run `pip install requirements.txt`. All required packages are included in the requirements file. 
 
 To run the application run the setup.sh bash to setup all environment variables (change username/password to your own!):
 ```bash
 source setup.sh
 ```
+
+Or simply copy/paste the export commands to your terminal.
 
 Working in development mode shows an interactive debugger in the console and restarts the server whenever changes are made. Development has been done using WSL2.
 
@@ -48,6 +56,16 @@ The application will run on `http://127.0.0.1:5000/`
 #### Frontend
 
 Not developed yet.
+
+## Authentication
+
+This application uses 3 token for authentication:
+
+- Casting Assistant: CASTING_ASSISTANT_TOKEN
+- Casting Director: CASTING_DIRECTOR_TOKEN
+- Executive Director: EXECUTIVE_DIRECTOR_TOKEN
+
+The tokens for each role can be seen in setup.sh (valid from 24h since 15:00 29/07/2024)
 
 ## API Reference
 
